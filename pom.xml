@@ -47,6 +47,15 @@
 		    <artifactId>mysql-connector-java</artifactId>
 		    <version>8.0.28</version> <!-- 使用しているMySQLのバージョンに合わせてバージョン番号を変更 -->
 		</dependency>
+		<dependency>
+		    <groupId>jakarta.persistence</groupId>
+		    <artifactId>jakarta.persistence-api</artifactId>
+		</dependency>
+		<dependency>
+	        <groupId>org.hibernate</groupId>
+	        <artifactId>hibernate-core</artifactId>
+	        <version>6.4.1.Final</version>
+    	</dependency>
 	</dependencies>
 
 	<build>

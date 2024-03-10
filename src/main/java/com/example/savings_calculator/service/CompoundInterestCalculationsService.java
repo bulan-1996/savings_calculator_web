@@ -56,4 +56,21 @@ public class CompoundInterestCalculationsService {
 			
 		}
 	}
+	
+	public CompoundInterestCalculationsDTO getCalculationByUserIdAndName(int userId, String name) {
+		CompoundInterestCalculations compoundInterestCalculations = compoundInterestCalculationsRepository.findByUserIdAndName(userId,name);
+		return convertToDto(compoundInterestCalculations);
+	}
+	
+	private CompoundInterestCalculationsDTO convertToDto(CompoundInterestCalculations compoundInterestCalculations) {
+		CompoundInterestCalculationsDTO compoundInterestCalculationsDTO = new CompoundInterestCalculationsDTO();
+		compoundInterestCalculationsDTO.setId(compoundInterestCalculations.getId());
+		compoundInterestCalculationsDTO.setUserId(compoundInterestCalculations.getUserId());
+		compoundInterestCalculationsDTO.setName(compoundInterestCalculations.getName());
+		compoundInterestCalculationsDTO.setAnnualInterestRate(compoundInterestCalculations.getAnnualInterestRate());
+		compoundInterestCalculationsDTO.setInvestmentYears(compoundInterestCalculations.getInvestmentYears());
+		compoundInterestCalculationsDTO.setMonthlyInvestment(compoundInterestCalculations.getMonthlyInvestment());
+		compoundInterestCalculationsDTO.setInitialCapital(compoundInterestCalculations.getInitialCapital());
+		return compoundInterestCalculationsDTO;
+	}
 }

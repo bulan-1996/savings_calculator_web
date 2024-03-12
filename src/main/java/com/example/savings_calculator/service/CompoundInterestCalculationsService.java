@@ -1,12 +1,18 @@
 package com.example.savings_calculator.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.sql.DataSource;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.savings_calculator.dto.CompoundInterestCalculationsDTO;
 import com.example.savings_calculator.entity.CompoundInterestCalculations;
 import com.example.savings_calculator.repository.CompoundInterestCalculationsRepository;
+
+
 
 /***
  *  compound_interest_calculationsテーブルService
@@ -23,6 +29,7 @@ public class CompoundInterestCalculationsService {
         this.dataSource = dataSource;
     }
 	// 積立計算機の情報をデータベースに保存する処理
+	@Transactional
 	public void saveCompoundInterestCalculations(CompoundInterestCalculationsDTO compoundInterestCalculationsDTO) {
 		// 既に存在するデータであるか確認のため、DB検索を実施する。
 		int userId = compoundInterestCalculationsDTO.getUserId();
@@ -56,12 +63,35 @@ public class CompoundInterestCalculationsService {
 			
 		}
 	}
-	
+	/***
+	 * 積立計算機呼出時の処理内容
+	 * 読み取り専用なのでreadOnly = trueと記載
+	 * @param userId
+	 * @param name
+	 * @return
+	 */
+	@Transactional(readOnly = true)
 	public CompoundInterestCalculationsDTO getCalculationByUserIdAndName(int userId, String name) {
 		CompoundInterestCalculations compoundInterestCalculations = compoundInterestCalculationsRepository.findByUserIdAndName(userId,name);
 		return convertToDto(compoundInterestCalculations);
 	}
 	
+	/***
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public List<CompoundInterestCalculationsDTO> getCalculationByUserId(int userId) {
+		List<CompoundInterestCalculations> compoundInterestCalculationsList  = compoundInterestCalculationsRepository.findAllByUserId(userId);
+		return compoundInterestCalculationsList.stream()
+	            .map(this::convertToDto)
+	            .collect(Collectors.toList());
+	}
+	/***
+	 * 積立計算機の型変換メソッド
+	 * @param compoundInterestCalculations
+	 * @return
+	 */
 	private CompoundInterestCalculationsDTO convertToDto(CompoundInterestCalculations compoundInterestCalculations) {
 		CompoundInterestCalculationsDTO compoundInterestCalculationsDTO = new CompoundInterestCalculationsDTO();
 		compoundInterestCalculationsDTO.setId(compoundInterestCalculations.getId());
@@ -73,4 +103,18 @@ public class CompoundInterestCalculationsService {
 		compoundInterestCalculationsDTO.setInitialCapital(compoundInterestCalculations.getInitialCapital());
 		return compoundInterestCalculationsDTO;
 	}
+	
+	/***
+	 * 積立計算機のテーブル情報を削除する処理
+	 * 
+	 * @param userId
+	 * @param name
+	 */
+	@Transactional
+	public void deleteCompoundInterestCalculations(CompoundInterestCalculationsDTO compoundInterestCalculationsDTO) {
+		int userId = compoundInterestCalculationsDTO.getUserId();
+		String name = compoundInterestCalculationsDTO.getName();
+		compoundInterestCalculationsRepository.deleteByUserIdAndName(userId, name);
+	}
+	
 }
